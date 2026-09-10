@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
+    libonig-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd \
