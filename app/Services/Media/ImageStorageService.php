@@ -56,7 +56,7 @@ final class ImageStorageService
 
         $path = trim($directory, '/').'/'.Str::random(40).'.webp';
 
-        Storage::disk('public')->put($path, $encoded);
+        $this->disk()->put($path, $encoded);
 
         return $path;
     }
@@ -68,11 +68,21 @@ final class ImageStorageService
             return;
         }
 
-        Storage::disk('public')->delete($path);
+        $this->disk()->delete($path);
     }
 
     public function url(string $path): string
     {
-        return Storage::disk('public')->url($path);
+        return $this->disk()->url($path);
+    }
+
+    /**
+     * The configured default disk rather than a hardcoded "public" — on Render
+     * that disk is wiped on every deploy, so production points this at
+     * "cloudinary" via FILESYSTEM_DISK instead.
+     */
+    private function disk(): \Illuminate\Contracts\Filesystem\Filesystem
+    {
+        return Storage::disk(config('filesystems.default'));
     }
 }

@@ -39,7 +39,7 @@ class AddonsRelationManager extends RelationManager
                 FileUpload::make('image_path')
                     ->label('Photo')
                     ->image()
-                    ->disk('public')
+                    ->disk(config('filesystems.default'))
                     ->directory('addons')
                     ->maxSize(4096)
                     ->imageEditor()
@@ -74,7 +74,7 @@ class AddonsRelationManager extends RelationManager
             ->columns([
                 ImageColumn::make('image_path')
                     ->label('')
-                    ->disk('public')
+                    ->disk(config('filesystems.default'))
                     ->circular(),
 
                 TextColumn::make('name')

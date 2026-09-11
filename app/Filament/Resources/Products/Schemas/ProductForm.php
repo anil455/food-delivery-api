@@ -58,7 +58,7 @@ class ProductForm
                     FileUpload::make('image_path')
                         ->label('Photo')
                         ->image()
-                        ->disk('public')
+                        ->disk(config('filesystems.default'))
                         ->directory('products')
                         ->maxSize(4096)
                         ->imageEditor()

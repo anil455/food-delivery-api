@@ -26,7 +26,7 @@ class ProductsTable
             ->columns([
                 ImageColumn::make('image_path')
                     ->label('')
-                    ->disk('public')
+                    ->disk(config('filesystems.default'))
                     ->square(),
 
                 TextColumn::make('name')

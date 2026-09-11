@@ -44,7 +44,7 @@ class CategoryForm
                 FileUpload::make('image_path')
                     ->label('Image')
                     ->image()
-                    ->disk('public')
+                    ->disk(config('filesystems.default'))
                     ->directory('categories')
                     ->maxSize(4096)
                     ->imageEditor()

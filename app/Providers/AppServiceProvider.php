@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Filesystem\CloudinaryAdapter;
 use App\Services\Tenancy\RestaurantContext;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Filesystem\FilesystemAdapter as LaravelFilesystemAdapter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use League\Flysystem\Filesystem as Flysystem;
 use RuntimeException;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->assertOtpIsNotExposedInProduction();
         $this->registerRateLimiters();
+        $this->registerCloudinaryDisk();
 
         /*
          * Strict mode outside production: lazy loading, assigning attributes
@@ -60,6 +65,32 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('orders', fn (Request $request) => Limit::perMinute(5)
             ->by('user:'.$request->user()?->getAuthIdentifier()));
+    }
+
+    /**
+     * Registers the "cloudinary" disk driver.
+     *
+     * Render's disk is wiped on every deploy and every scale-to-zero, so
+     * uploaded product/category images stored on the "public" disk there do
+     * not survive. Setting FILESYSTEM_DISK=cloudinary routes those uploads to
+     * Cloudinary instead, which is durable.
+     *
+     * cloudinary_php 1.x configures itself globally via \Cloudinary::config()
+     * rather than an object passed around, so that happens here, once, from
+     * the disk's own config array — never implicitly from getenv(), which
+     * Laravel's env() does not keep in sync with.
+     */
+    private function registerCloudinaryDisk(): void
+    {
+        Storage::extend('cloudinary', function ($app, array $config) {
+            if (! empty($config['connection_url'])) {
+                \Cloudinary::config_from_url($config['connection_url']);
+            }
+
+            $adapter = new CloudinaryAdapter((string) \Cloudinary::config_get('cloud_name'));
+
+            return new LaravelFilesystemAdapter(new Flysystem($adapter), $adapter, $config);
+        });
     }
 
     /**
