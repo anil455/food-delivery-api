@@ -20,6 +20,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -127,6 +128,11 @@ class RestaurantResource extends Resource
         return $table
             ->defaultSort('name')
             ->columns([
+                ImageColumn::make('logo_path')
+                    ->label('')
+                    ->disk(config('filesystems.default'))
+                    ->circular(),
+
                 TextColumn::make('name')->searchable()->sortable()->weight('medium')
                     ->description(fn (Restaurant $r): string => $r->city),
 
