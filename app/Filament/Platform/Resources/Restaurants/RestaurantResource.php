@@ -12,6 +12,7 @@ use App\Models\Restaurant;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -47,6 +48,25 @@ class RestaurantResource extends Resource
                         ->default('Asia/Kolkata')
                         ->searchable()
                         ->required(),
+                ]),
+
+            Section::make('Images')
+                ->columns(2)
+                ->schema([
+                    FileUpload::make('logo_path')
+                        ->label('Logo')
+                        ->image()
+                        ->disk(config('filesystems.default'))
+                        ->directory('restaurants/logos')
+                        ->maxSize(4096)
+                        ->imageEditor(),
+                    FileUpload::make('cover_path')
+                        ->label('Cover image')
+                        ->image()
+                        ->disk(config('filesystems.default'))
+                        ->directory('restaurants/covers')
+                        ->maxSize(4096)
+                        ->imageEditor(),
                 ]),
 
             Section::make('Location')
