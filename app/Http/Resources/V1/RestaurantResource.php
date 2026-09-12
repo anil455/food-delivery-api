@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\V1;
 
+use App\Services\Media\ImageStorageService;
 use App\Services\Restaurant\OpeningHoursService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,6 +17,7 @@ class RestaurantResource extends JsonResource
     public function toArray(Request $request): array
     {
         $hours = app(OpeningHoursService::class);
+        $images = app(ImageStorageService::class);
         $nextOpensAt = $hours->nextOpensAt($this->resource);
 
         return [
@@ -23,6 +25,9 @@ class RestaurantResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
+
+            'logo_path' => $this->logo_path ? $images->url($this->logo_path) : null,
+            'cover_path' => $this->cover_path ? $images->url($this->cover_path) : null,
 
             'phone' => $this->phone,
             'email' => $this->email,
