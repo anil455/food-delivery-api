@@ -10,18 +10,21 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Turns a coordinate into the address a customer would recognise, via the
- * free Nominatim (OpenStreetMap) reverse-geocoding API.
+ * Turns a coordinate into the address a customer would recognise, via
+ * LocationIQ's reverse-geocoding API (OSM data, same response shape as
+ * Nominatim, served from infrastructure that accepts cloud/datacenter
+ * traffic — Nominatim's own public server does not, see
+ * https://operations.osmfoundation.org/policies/nominatim/).
  *
- * Results are cached per coordinate, rounded to ~11 metres: Nominatim's public
- * instance asks for no more than ~1 request/second, and a customer's device
- * re-sends the same GPS fix on every app open and screen focus.
+ * Results are cached per coordinate, rounded to ~11 metres: it's the free
+ * tier, and a customer's device re-sends the same GPS fix on every app open
+ * and screen focus.
  */
 final class ReverseGeocoder
 {
     public function locate(GeoPoint $point): ?ReverseGeocodeResult
     {
-        $ttlMinutes = (int) config('geo.nominatim_cache_minutes');
+        $ttlMinutes = (int) config('geo.reverse_geocode_cache_minutes');
 
         return Cache::remember(
             $this->cacheKey($point),
@@ -32,22 +35,20 @@ final class ReverseGeocoder
 
     private function fetch(GeoPoint $point): ?ReverseGeocodeResult
     {
-        $baseUrl = rtrim((string) config('geo.nominatim_base_url'), '/');
+        $baseUrl = rtrim((string) config('geo.locationiq_base_url'), '/');
 
         try {
-            $response = Http::withHeaders([
-                'User-Agent' => (string) config('geo.nominatim_user_agent'),
-            ])
-                ->timeout(5)
+            $response = Http::timeout(5)
                 ->get("{$baseUrl}/reverse", [
-                    'format' => 'jsonv2',
+                    'key' => (string) config('geo.locationiq_api_key'),
                     'lat' => $point->latitude,
                     'lon' => $point->longitude,
+                    'format' => 'json',
                     'zoom' => 18,
                     'addressdetails' => 1,
                 ]);
         } catch (ConnectionException $e) {
-            Log::warning('Nominatim reverse geocode: connection failed', [
+            Log::warning('LocationIQ reverse geocode: connection failed', [
                 'point' => $point->toArray(),
                 'error' => $e->getMessage(),
             ]);
@@ -56,7 +57,7 @@ final class ReverseGeocoder
         }
 
         if ($response->failed() || $response->json('error') !== null) {
-            Log::warning('Nominatim reverse geocode: request rejected', [
+            Log::warning('LocationIQ reverse geocode: request rejected', [
                 'point' => $point->toArray(),
                 'status' => $response->status(),
                 'body' => $response->body(),
@@ -65,7 +66,7 @@ final class ReverseGeocoder
             return null;
         }
 
-        return ReverseGeocodeResult::fromNominatim($response->json());
+        return ReverseGeocodeResult::fromAddressLookup($response->json());
     }
 
     private function cacheKey(GeoPoint $point): string

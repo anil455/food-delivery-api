@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class ReverseGeocodeTest extends TestCase
 {
-    private function fakeNominatimResponse(): array
+    private function fakeLocationIqResponse(): array
     {
         return [
             'display_name' => 'Durga Colony, Jharsa Village, Sector 39, Gurugram, Haryana, 122001, India',
@@ -32,7 +32,7 @@ class ReverseGeocodeTest extends TestCase
     public function it_resolves_an_address_for_the_given_coordinates(): void
     {
         Http::fake([
-            'nominatim.openstreetmap.org/*' => Http::response($this->fakeNominatimResponse()),
+            'us1.locationiq.com/*' => Http::response($this->fakeLocationIqResponse()),
         ]);
 
         $response = $this->getJson('/api/v1/geocode/reverse?latitude=28.4650&longitude=77.0298')
@@ -49,17 +49,16 @@ class ReverseGeocodeTest extends TestCase
             ],
         ]);
 
-        Http::assertSent(fn ($request) => $request->hasHeader('User-Agent')
-            && str_contains((string) $request->url(), '/reverse')
+        Http::assertSent(fn ($request) => str_contains((string) $request->url(), '/reverse')
             && $request['lat'] === 28.4650
             && $request['lon'] === 77.0298);
     }
 
     #[Test]
-    public function it_caches_results_per_coordinate_so_nominatim_is_not_hammered(): void
+    public function it_caches_results_per_coordinate_so_locationiq_is_not_hammered(): void
     {
         Http::fake([
-            'nominatim.openstreetmap.org/*' => Http::response($this->fakeNominatimResponse()),
+            'us1.locationiq.com/*' => Http::response($this->fakeLocationIqResponse()),
         ]);
 
         $point = new GeoPoint(28.4650, 77.0298);
@@ -72,10 +71,10 @@ class ReverseGeocodeTest extends TestCase
     }
 
     #[Test]
-    public function it_reports_failure_without_crashing_when_nominatim_is_unreachable(): void
+    public function it_reports_failure_without_crashing_when_locationiq_is_unreachable(): void
     {
         Http::fake([
-            'nominatim.openstreetmap.org/*' => Http::response(null, 503),
+            'us1.locationiq.com/*' => Http::response(null, 503),
         ]);
 
         $this->getJson('/api/v1/geocode/reverse?latitude=28.4650&longitude=77.0298')

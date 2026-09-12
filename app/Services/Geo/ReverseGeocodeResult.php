@@ -7,11 +7,12 @@ namespace App\Services\Geo;
 use App\Models\Address;
 
 /**
- * The address Nominatim resolved for a point, trimmed to what the app displays.
+ * The address a reverse-geocode lookup resolved for a point, trimmed to what
+ * the app displays.
  *
  * Field names deliberately mirror {@see Address} (city, state,
  * postal_code, country) so a client can drop this straight into an address
- * form instead of remapping Nominatim's own vocabulary.
+ * form instead of remapping the provider's own vocabulary.
  */
 final readonly class ReverseGeocodeResult
 {
@@ -24,15 +25,19 @@ final readonly class ReverseGeocodeResult
         public ?string $country,
     ) {}
 
-    public static function fromNominatim(array $payload): self
+    /**
+     * Shared by LocationIQ and Nominatim: LocationIQ serves the same OSM data
+     * in the same `address` shape.
+     */
+    public static function fromAddressLookup(array $payload): self
     {
         $address = $payload['address'] ?? [];
 
         return new self(
             displayName: (string) ($payload['display_name'] ?? ''),
-            // Nominatim has no single "neighbourhood" field; this is the order
-            // that most reliably lands on something Zomato-style UIs show as
-            // the bold first line (e.g. "Durga Colony").
+            // Neither provider has a single "neighbourhood" field; this is the
+            // order that most reliably lands on something Zomato-style UIs
+            // show as the bold first line (e.g. "Durga Colony").
             area: $address['suburb']
                 ?? $address['neighbourhood']
                 ?? $address['residential']

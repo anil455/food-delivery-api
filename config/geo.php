@@ -14,15 +14,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Reverse geocoding (Nominatim / OpenStreetMap)
+    | Reverse geocoding (LocationIQ)
     |--------------------------------------------------------------------------
-    | Free, no API key. Its usage policy requires an identifying User-Agent
-    | with real contact info and caps public-server traffic at ~1 req/sec, which
-    | is why results are cached — see ReverseGeocoder.
+    | Nominatim's own public server rejects traffic from cloud/datacenter IPs
+    | (Render included) with a 403 — see https://operations.osmfoundation.org/policies/nominatim/.
+    | LocationIQ serves the same OSM data over the same response shape, but from
+    | infrastructure meant for exactly this, and has a free tier that needs no
+    | card. Results are still cached — see ReverseGeocoder.
     */
-    'nominatim_base_url' => env('NOMINATIM_BASE_URL', 'https://nominatim.openstreetmap.org'),
-    'nominatim_user_agent' => env('NOMINATIM_USER_AGENT', 'FoodDeliveryApi/1.0 (contact: set-NOMINATIM_USER_AGENT-in-env@example.com)'),
-    'nominatim_cache_minutes' => (int) env('NOMINATIM_CACHE_MINUTES', 1440),
+    'locationiq_base_url' => env('LOCATIONIQ_BASE_URL', 'https://us1.locationiq.com/v1'),
+    'locationiq_api_key' => env('LOCATIONIQ_API_KEY'),
+    'reverse_geocode_cache_minutes' => (int) env('REVERSE_GEOCODE_CACHE_MINUTES', 1440),
 
     /*
     |--------------------------------------------------------------------------
