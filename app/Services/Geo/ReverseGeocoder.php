@@ -26,11 +26,13 @@ final class ReverseGeocoder
     {
         $ttlMinutes = (int) config('geo.reverse_geocode_cache_minutes');
 
-        return Cache::remember(
+        $cached = Cache::remember(
             $this->cacheKey($point),
             now()->addMinutes($ttlMinutes),
-            fn () => $this->fetch($point),
+            fn () => $this->fetch($point)?->toArray(),
         );
+
+        return $cached === null ? null : ReverseGeocodeResult::fromArray($cached);
     }
 
     private function fetch(GeoPoint $point): ?ReverseGeocodeResult
@@ -76,6 +78,10 @@ final class ReverseGeocoder
 
     private function cacheKey(GeoPoint $point): string
     {
-        return sprintf('geocode:reverse:%.4f:%.4f', $point->latitude, $point->longitude);
+        // Versioned: bumping this invalidates old entries outright instead of
+        // risking a stale, incompatible cached shape after this class changes
+        // — a persistent cache store (e.g. the database driver) survives
+        // across deploys, unlike the container's own filesystem.
+        return sprintf('geocode:reverse:v2:%.4f:%.4f', $point->latitude, $point->longitude);
     }
 }

@@ -65,4 +65,23 @@ final readonly class ReverseGeocodeResult
             'country' => $this->country,
         ];
     }
+
+    /**
+     * The inverse of {@see toArray()} — used to rehydrate a cached lookup.
+     * ReverseGeocoder caches this plain shape rather than the object itself:
+     * a serialized object under a persistent cache store (survives across
+     * deploys) can fail to unserialize after the class changes underneath it,
+     * where a plain array always round-trips.
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            displayName: $data['display_name'],
+            area: $data['area'],
+            city: $data['city'],
+            state: $data['state'],
+            postalCode: $data['postal_code'],
+            country: $data['country'],
+        );
+    }
 }
