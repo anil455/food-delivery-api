@@ -14,6 +14,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Reverse geocoding (Nominatim / OpenStreetMap)
+    |--------------------------------------------------------------------------
+    | Free, no API key. Its usage policy requires an identifying User-Agent
+    | with real contact info and caps public-server traffic at ~1 req/sec, which
+    | is why results are cached — see ReverseGeocoder.
+    */
+    'nominatim_base_url' => env('NOMINATIM_BASE_URL', 'https://nominatim.openstreetmap.org'),
+    'nominatim_user_agent' => env('NOMINATIM_USER_AGENT', 'FoodDeliveryApi/1.0 (contact: set-NOMINATIM_USER_AGENT-in-env@example.com)'),
+    'nominatim_cache_minutes' => (int) env('NOMINATIM_CACHE_MINUTES', 1440),
+
+    /*
+    |--------------------------------------------------------------------------
     | Constants
     |--------------------------------------------------------------------------
     | Mean earth radius in kilometres, and kilometres per degree of latitude —

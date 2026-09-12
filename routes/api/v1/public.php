@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Public\ConfigController;
 use App\Http\Controllers\Api\V1\Public\NearbyRestaurantController;
 use App\Http\Controllers\Api\V1\Public\RestaurantController;
+use App\Http\Controllers\Api\V1\Public\ReverseGeocodeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,7 @@ Route::middleware('throttle:api')->group(function (): void {
 
     Route::get('restaurants/nearby', NearbyRestaurantController::class)->name('restaurants.nearby');
     Route::get('restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
+    Route::get('geocode/reverse', ReverseGeocodeController::class)->name('geocode.reverse');
 
     Route::get('restaurants/{slug}', [RestaurantController::class, 'show'])->name('restaurants.show');
     Route::get('restaurants/{slug}/hours', [RestaurantController::class, 'hours'])->name('restaurants.hours');

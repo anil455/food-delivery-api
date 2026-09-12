@@ -33,6 +33,9 @@ enum ApiErrorCode: string
     case TwoFactorRequired = 'TWO_FACTOR_REQUIRED';
     case TwoFactorInvalid = 'TWO_FACTOR_INVALID';
 
+    // Geo
+    case GeocodeFailed = 'GEOCODE_FAILED';
+
     // Tenancy
     case TenantContextMissing = 'TENANT_CONTEXT_MISSING';
     case RestaurantNotAccessible = 'RESTAURANT_NOT_ACCESSIBLE';
