@@ -17,6 +17,15 @@ use Illuminate\Support\Collection;
  *      (status, latitude, longitude) and computes exact Haversine distance
  *   2. an outer query filters and orders on that distance
  *
+ * A restaurant is included if it's within the search radius OR within its own
+ * `delivery_radius_km` — the latter lets a restaurant willing to travel
+ * further than the default search radius still turn up for a customer it can
+ * actually reach, rather than being capped out by a fixed distance nobody
+ * configured for it specifically. That's also why the bounding box (stage 1)
+ * is sized to the larger of the search radius and the app-wide maximum
+ * delivery radius: a restaurant with a wide delivery radius that sits outside
+ * a box sized only for the search radius would never reach stage 2 at all.
+ *
  * Distance is never computed in PHP across the table. What PHP does compute, on
  * the small result set only, is whether each restaurant is currently open, which
  * needs per-restaurant timezones and multi-slot schedules and would be
@@ -40,7 +49,8 @@ final class NearbyRestaurantFinder
     ): Collection {
         $radiusKm = $this->clampRadius($radiusKm);
         $limit ??= (int) config('geo.result_limit');
-        $box = BoundingBox::around($origin, $radiusKm);
+        $boxRadiusKm = max($radiusKm, (float) config('geo.max_delivery_radius_km'));
+        $box = BoundingBox::around($origin, $boxRadiusKm);
 
         // Searching for restaurants is cross-tenant by definition: it is the
         // query that decides which tenant the customer will use next.
@@ -70,7 +80,10 @@ final class NearbyRestaurantFinder
              */
             $query = Restaurant::query()
                 ->fromSub($inner, 'restaurants')
-                ->where('distance_km', '<=', $radiusKm);
+                ->where(function ($q) use ($radiusKm) {
+                    $q->where('distance_km', '<=', $radiusKm)
+                        ->orWhereColumn('distance_km', '<=', 'delivery_radius_km');
+                });
 
             if ($onlyDeliverable) {
                 $query->whereColumn('distance_km', '<=', 'delivery_radius_km');

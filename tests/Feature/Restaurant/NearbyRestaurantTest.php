@@ -9,6 +9,7 @@ use App\Services\Geo\GeoPoint;
 use App\Services\Geo\HaversineCalculator;
 use App\Services\Geo\NearbyRestaurantFinder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -21,7 +22,7 @@ class NearbyRestaurantTest extends TestCase
 
     private const ORIGIN_LNG = 77.2167;
 
-    private function nearby(array $params = []): \Illuminate\Testing\TestResponse
+    private function nearby(array $params = []): TestResponse
     {
         return $this->getJson('/api/v1/restaurants/nearby?'.http_build_query([
             'latitude' => self::ORIGIN_LAT,
@@ -166,6 +167,26 @@ class NearbyRestaurantTest extends TestCase
         // questions, and the response answers both rather than hiding one.
         $this->assertFalse($data['Too Far To Deliver']['delivers_to_you']);
         $this->assertTrue($data['Will Deliver']['delivers_to_you']);
+    }
+
+    #[Test]
+    public function a_restaurant_beyond_the_default_search_radius_still_shows_if_its_own_delivery_radius_reaches_the_caller(): void
+    {
+        // ~14 km away — outside the 10 km default search radius.
+        Restaurant::factory()->at(28.7041, 77.1025)->create([
+            'name' => 'Willing To Travel Far',
+            'delivery_radius_km' => 25,
+        ]);
+        Restaurant::factory()->at(28.7042, 77.1026)->create([
+            'name' => 'Same Distance, Short Reach',
+            'delivery_radius_km' => 5,
+        ]);
+
+        // No `radius` param: falls back to the 10 km default.
+        $names = $this->nearby()->assertOk()->json('data.*.name');
+
+        $this->assertContains('Willing To Travel Far', $names);
+        $this->assertNotContains('Same Distance, Short Reach', $names);
     }
 
     #[Test]

@@ -13,6 +13,14 @@ return [
     'result_limit' => (int) env('GEO_NEARBY_RESULT_LIMIT', 50),
 
     /*
+    | The widest delivery_radius_km a restaurant is allowed to set (see the
+    | Filament restaurant form). A restaurant that sets it still turns up for
+    | a customer beyond the search radius above — see NearbyRestaurantFinder
+    | — so this also sizes how wide that search has to look in the worst case.
+    */
+    'max_delivery_radius_km' => (float) env('GEO_MAX_DELIVERY_RADIUS_KM', 50),
+
+    /*
     |--------------------------------------------------------------------------
     | Reverse geocoding (LocationIQ)
     |--------------------------------------------------------------------------
