@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Admin\AddonController;
 use App\Http\Controllers\Api\V1\Admin\AddonGroupController;
 use App\Http\Controllers\Api\V1\Admin\AuthController;
+use App\Http\Controllers\Api\V1\Admin\BannerController;
 use App\Http\Controllers\Api\V1\Admin\CouponController;
 use App\Http\Controllers\Api\V1\Admin\HolidayController;
 use App\Http\Controllers\Api\V1\Admin\ProductVariantController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Api\V1\Admin\ProductController;
 use App\Http\Controllers\Api\V1\Admin\RestaurantController;
 use App\Http\Controllers\Api\V1\Admin\StaffController;
 use App\Http\Controllers\Api\V1\Admin\TwoFactorController;
+use App\Http\Controllers\Api\V1\SuperAdmin\BannerController as PlatformBannerController;
 use App\Http\Controllers\Api\V1\SuperAdmin\PlatformController;
 use App\Http\Controllers\Api\V1\SuperAdmin\RestaurantController as PlatformRestaurantController;
 use Illuminate\Support\Facades\Route;
@@ -58,6 +60,13 @@ Route::prefix('admin')->as('admin.')->group(function (): void {
         Route::patch('restaurant/status', [RestaurantController::class, 'toggleOrders'])->name('restaurant.status');
         Route::get('restaurant/hours', [RestaurantController::class, 'hours'])->name('restaurant.hours');
         Route::put('restaurant/hours', [RestaurantController::class, 'updateHours'])->name('restaurant.hours.update');
+
+        Route::get('banners', [BannerController::class, 'index'])->name('banners.index');
+        Route::post('banners', [BannerController::class, 'store'])->name('banners.store');
+        Route::get('banners/{banner}', [BannerController::class, 'show'])->name('banners.show');
+        Route::patch('banners/{banner}', [BannerController::class, 'update'])->name('banners.update');
+        Route::delete('banners/{banner}', [BannerController::class, 'destroy'])->name('banners.destroy');
+        Route::post('banners/{banner}/image', [BannerController::class, 'uploadImage'])->name('banners.image');
 
         Route::post('categories/reorder', [CategoryController::class, 'reorder'])->name('categories.reorder');
         Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
@@ -133,6 +142,13 @@ Route::prefix('super-admin')->as('super-admin.')
         Route::patch('restaurants/{restaurant}', [PlatformRestaurantController::class, 'update'])->name('restaurants.update');
         Route::patch('restaurants/{restaurant}/status', [PlatformRestaurantController::class, 'updateStatus'])->name('restaurants.status');
         Route::delete('restaurants/{restaurant}', [PlatformRestaurantController::class, 'destroy'])->name('restaurants.destroy');
+
+        Route::get('banners', [PlatformBannerController::class, 'index'])->name('banners.index');
+        Route::post('banners', [PlatformBannerController::class, 'store'])->name('banners.store');
+        Route::get('banners/{banner}', [PlatformBannerController::class, 'show'])->name('banners.show');
+        Route::patch('banners/{banner}', [PlatformBannerController::class, 'update'])->name('banners.update');
+        Route::delete('banners/{banner}', [PlatformBannerController::class, 'destroy'])->name('banners.destroy');
+        Route::post('banners/{banner}/image', [PlatformBannerController::class, 'uploadImage'])->name('banners.image');
 
         Route::get('users', [PlatformController::class, 'users'])->name('users.index');
         Route::patch('users/{user}/status', [PlatformController::class, 'updateUserStatus'])->name('users.status');

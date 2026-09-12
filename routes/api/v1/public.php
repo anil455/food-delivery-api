@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Public\BannerController;
 use App\Http\Controllers\Api\V1\Public\ConfigController;
 use App\Http\Controllers\Api\V1\Public\NearbyRestaurantController;
 use App\Http\Controllers\Api\V1\Public\RestaurantController;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('throttle:api')->group(function (): void {
     Route::get('config', ConfigController::class)->name('config');
+    Route::get('banners', BannerController::class)->name('banners');
 
     Route::get('restaurants/nearby', NearbyRestaurantController::class)->name('restaurants.nearby');
     Route::get('restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');

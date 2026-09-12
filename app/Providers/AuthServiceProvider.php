@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Models\Addon;
 use App\Models\AddonGroup;
+use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Order;
@@ -13,6 +14,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Restaurant;
 use App\Models\User;
+use App\Policies\BannerPolicy;
 use App\Policies\CatalogPolicy;
 use App\Policies\OrderPolicy;
 use App\Policies\RestaurantPolicy;
@@ -29,6 +31,7 @@ class AuthServiceProvider extends ServiceProvider
     private const POLICIES = [
         Restaurant::class => RestaurantPolicy::class,
         Order::class => OrderPolicy::class,
+        Banner::class => BannerPolicy::class,
         Category::class => CatalogPolicy::class,
         Product::class => CatalogPolicy::class,
         ProductVariant::class => CatalogPolicy::class,

@@ -1478,6 +1478,851 @@
                 }
             }
         },
+        "/banners": {
+            "get": {
+                "operationId": "v1.banners",
+                "tags": [
+                    "Banner"
+                ],
+                "parameters": [
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "schema": {
+                            "type": "number",
+                            "minimum": -90,
+                            "maximum": 90
+                        }
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "schema": {
+                            "type": "number",
+                            "minimum": -180,
+                            "maximum": 180
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banners fetched successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "type": "array",
+                                                    "items": {}
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/admin/banners": {
+            "get": {
+                "operationId": "v1.admin.banners.index",
+                "tags": [
+                    "Banner"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banners fetched successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "type": "array",
+                                                    "items": {}
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "v1.admin.banners.store",
+                "tags": [
+                    "Banner"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banner created successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "$ref": "#/components/schemas/BannerResource"
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/admin/banners/{banner}": {
+            "get": {
+                "operationId": "v1.admin.banners.show",
+                "tags": [
+                    "Banner"
+                ],
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banner fetched successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "$ref": "#/components/schemas/BannerResource"
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "v1.admin.banners.update",
+                "tags": [
+                    "Banner"
+                ],
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banner updated successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "$ref": "#/components/schemas/BannerResource"
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "v1.admin.banners.destroy",
+                "tags": [
+                    "Banner"
+                ],
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banner deleted successfully"
+                                        },
+                                        "data": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/admin/banners/{banner}/image": {
+            "post": {
+                "operationId": "v1.admin.banners.image",
+                "summary": "Banner images go through the same re-encoding path as category/product images",
+                "tags": [
+                    "Banner"
+                ],
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "contentMediaType": "application/octet-stream",
+                                        "description": "Maximum file size: 4096 kilobytes."
+                                    }
+                                },
+                                "required": [
+                                    "image"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banner image updated successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "image_path": {
+                                                            "type": "string"
+                                                        },
+                                                        "image_url": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "id",
+                                                        "image_path",
+                                                        "image_url"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/super-admin/banners": {
+            "get": {
+                "operationId": "v1.super-admin.banners.index",
+                "tags": [
+                    "Banner"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banners fetched successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "type": "array",
+                                                    "items": {}
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "v1.super-admin.banners.store",
+                "tags": [
+                    "Banner"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banner created successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "$ref": "#/components/schemas/BannerResource"
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/super-admin/banners/{banner}": {
+            "get": {
+                "operationId": "v1.super-admin.banners.show",
+                "tags": [
+                    "Banner"
+                ],
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banner fetched successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "$ref": "#/components/schemas/BannerResource"
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "v1.super-admin.banners.update",
+                "tags": [
+                    "Banner"
+                ],
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banner updated successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "$ref": "#/components/schemas/BannerResource"
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "v1.super-admin.banners.destroy",
+                "tags": [
+                    "Banner"
+                ],
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banner deleted successfully"
+                                        },
+                                        "data": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/super-admin/banners/{banner}/image": {
+            "post": {
+                "operationId": "v1.super-admin.banners.image",
+                "tags": [
+                    "Banner"
+                ],
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "contentMediaType": "application/octet-stream",
+                                        "description": "Maximum file size: 4096 kilobytes."
+                                    }
+                                },
+                                "required": [
+                                    "image"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Banner image updated successfully"
+                                        },
+                                        "data": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "image_path": {
+                                                            "type": "string"
+                                                        },
+                                                        "image_url": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "id",
+                                                        "image_path",
+                                                        "image_url"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "message",
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/cart": {
             "get": {
                 "operationId": "v1.cart.show",
@@ -9135,34 +9980,19 @@
                                                             "type": "string"
                                                         },
                                                         "area": {
-                                                            "type": [
-                                                                "string",
-                                                                "null"
-                                                            ]
+                                                            "type": "string"
                                                         },
                                                         "city": {
-                                                            "type": [
-                                                                "string",
-                                                                "null"
-                                                            ]
+                                                            "type": "string"
                                                         },
                                                         "state": {
-                                                            "type": [
-                                                                "string",
-                                                                "null"
-                                                            ]
+                                                            "type": "string"
                                                         },
                                                         "postal_code": {
-                                                            "type": [
-                                                                "string",
-                                                                "null"
-                                                            ]
+                                                            "type": "string"
                                                         },
                                                         "country": {
-                                                            "type": [
-                                                                "string",
-                                                                "null"
-                                                            ]
+                                                            "type": "string"
                                                         }
                                                     },
                                                     "required": [
@@ -10661,6 +11491,97 @@
                 ],
                 "title": "AddressResource"
             },
+            "BannerResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "subtitle": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "image_path": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "link_type": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "link_value": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "restaurant": {
+                        "type": "object",
+                        "description": "Present only for a restaurant's own promotion, never for a\nplatform banner.",
+                        "properties": {
+                            "id": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "slug": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id"
+                        ]
+                    },
+                    "distance_km": {
+                        "type": "number",
+                        "description": "Only present when BannerFinder computed it (the public,\nlocation-aware listing), not on the plain admin CRUD endpoints."
+                    },
+                    "sort_order": {
+                        "type": "integer"
+                    },
+                    "starts_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "ends_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "id",
+                    "title",
+                    "subtitle",
+                    "image_path",
+                    "link_type",
+                    "link_value",
+                    "sort_order",
+                    "starts_at",
+                    "ends_at",
+                    "is_active"
+                ],
+                "title": "BannerResource"
+            },
             "CategoryResource": {
                 "type": "object",
                 "properties": {
@@ -11420,6 +12341,18 @@
                             "null"
                         ]
                     },
+                    "logo_path": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "cover_path": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "phone": {
                         "type": "string"
                     },
@@ -11545,6 +12478,8 @@
                     "name",
                     "slug",
                     "description",
+                    "logo_path",
+                    "cover_path",
                     "phone",
                     "email",
                     "address",
