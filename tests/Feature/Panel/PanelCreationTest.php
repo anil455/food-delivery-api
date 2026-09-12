@@ -37,7 +37,8 @@ class PanelCreationTest extends TestCase
     public function the_platform_panel_creates_a_restaurant_and_its_first_owner(): void
     {
         $superAdmin = User::factory()->superAdmin()->create();
-        $this->actingAs($superAdmin);
+        // The platform panel has its own guard (see PlatformPanelProvider).
+        $this->actingAs($superAdmin, 'platform');
         Filament::setCurrentPanel('platform');
 
         Livewire::test(CreateRestaurant::class)
@@ -84,7 +85,8 @@ class PanelCreationTest extends TestCase
     public function the_new_owner_can_immediately_sign_in_to_the_admin_panel(): void
     {
         $superAdmin = User::factory()->superAdmin()->create();
-        $this->actingAs($superAdmin);
+        // The platform panel has its own guard (see PlatformPanelProvider).
+        $this->actingAs($superAdmin, 'platform');
         Filament::setCurrentPanel('platform');
 
         Livewire::test(CreateRestaurant::class)
@@ -105,7 +107,11 @@ class PanelCreationTest extends TestCase
         $this->assertTrue($owner->canAccessPanel(Filament::getPanel('admin')));
         $this->assertTrue($owner->canAccessTenant($restaurant));
 
-        $this->actingAs($owner)
+        // actingAs()'s guard argument also becomes the test's default guard
+        // (Auth::shouldUse()) for any later call that omits one — since the
+        // platform sign-in above passed 'platform' explicitly, this one must
+        // name 'web' explicitly too, or it would inherit 'platform' instead.
+        $this->actingAs($owner, 'web')
             ->get('/admin/biryani-house/products')
             ->assertSuccessful();
     }

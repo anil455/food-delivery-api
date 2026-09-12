@@ -42,6 +42,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        /*
+         * A second session guard for the platform panel, sharing the same
+         * 'users' provider. Guards keep independent login state within the
+         * same session, so logging into the restaurant admin panel ('web')
+         * no longer logs a super admin out of the platform panel, and vice
+         * versa — both stay signed in side by side in one browser.
+         */
+        'platform' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
     /*

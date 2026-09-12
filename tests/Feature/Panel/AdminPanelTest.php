@@ -85,7 +85,11 @@ class AdminPanelTest extends TestCase
     #[Test]
     public function the_platform_panel_returns_403_to_restaurant_staff_over_http(): void
     {
-        $this->actingAs($this->ownerA)
+        // The platform panel has its own guard (see PlatformPanelProvider),
+        // so a restaurant owner attempting to sign in there is checked
+        // against it directly — credentials succeed, canAccessPanel() does
+        // not, same as a real login attempt through /platform/login would.
+        $this->actingAs($this->ownerA, 'platform')
             ->get('/platform')
             ->assertForbidden();
     }

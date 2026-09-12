@@ -39,6 +39,11 @@ class PlatformPanelProvider extends PanelProvider
             ->id('platform')
             ->path('platform')
             ->login()
+            // A dedicated guard so a platform login and a restaurant admin
+            // login can coexist in one browser instead of one replacing the
+            // other — both use session storage, they just keep separate
+            // "who's logged in" state within it.
+            ->authGuard('platform')
             ->brandName('Platform')
             ->colors([
                 'primary' => Color::Indigo,
