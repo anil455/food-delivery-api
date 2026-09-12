@@ -58,6 +58,10 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Storage link
 RUN php artisan storage:link || true
 
+# Entrypoint: runs pending migrations, then starts the app.
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 EXPOSE 10000
 
-CMD ["/usr/bin/supervisord", "-n"]
+CMD ["/usr/local/bin/entrypoint.sh"]
