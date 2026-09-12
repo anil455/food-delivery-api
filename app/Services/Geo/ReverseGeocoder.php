@@ -7,6 +7,7 @@ namespace App\Services\Geo;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Turns a coordinate into the address a customer would recognise, via the
@@ -45,11 +46,22 @@ final class ReverseGeocoder
                     'zoom' => 18,
                     'addressdetails' => 1,
                 ]);
-        } catch (ConnectionException) {
+        } catch (ConnectionException $e) {
+            Log::warning('Nominatim reverse geocode: connection failed', [
+                'point' => $point->toArray(),
+                'error' => $e->getMessage(),
+            ]);
+
             return null;
         }
 
         if ($response->failed() || $response->json('error') !== null) {
+            Log::warning('Nominatim reverse geocode: request rejected', [
+                'point' => $point->toArray(),
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
             return null;
         }
 
