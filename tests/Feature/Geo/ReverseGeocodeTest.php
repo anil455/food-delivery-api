@@ -86,6 +86,23 @@ class ReverseGeocodeTest extends TestCase
     }
 
     #[Test]
+    public function it_reports_failure_without_crashing_when_the_response_is_not_json(): void
+    {
+        // A rate limit or maintenance response can arrive as plain text with
+        // a 200 status — this must not crash trying to treat it as an object.
+        Http::fake([
+            'us1.locationiq.com/*' => Http::response('Rate Limited Second', 200),
+        ]);
+
+        $this->getJson('/api/v1/geocode/reverse?latitude=28.4650&longitude=77.0298')
+            ->assertStatus(503)
+            ->assertJson([
+                'success' => false,
+                'code' => 'GEOCODE_FAILED',
+            ]);
+    }
+
+    #[Test]
     public function it_requires_coordinates(): void
     {
         $this->getJson('/api/v1/geocode/reverse')

@@ -56,7 +56,12 @@ final class ReverseGeocoder
             return null;
         }
 
-        if ($response->failed() || $response->json('error') !== null) {
+        $payload = $response->json();
+
+        // A 2xx status doesn't guarantee a decodable JSON object: a rate-limit
+        // or maintenance response can still arrive as plain text with a 200,
+        // and json() then returns null rather than throwing.
+        if ($response->failed() || ! is_array($payload) || ($payload['error'] ?? null) !== null) {
             Log::warning('LocationIQ reverse geocode: request rejected', [
                 'point' => $point->toArray(),
                 'status' => $response->status(),
@@ -66,7 +71,7 @@ final class ReverseGeocoder
             return null;
         }
 
-        return ReverseGeocodeResult::fromAddressLookup($response->json());
+        return ReverseGeocodeResult::fromAddressLookup($payload);
     }
 
     private function cacheKey(GeoPoint $point): string
