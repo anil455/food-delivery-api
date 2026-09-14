@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Restaurant;
+use App\Models\RestaurantHour;
 use App\Models\User;
 use App\Policies\BannerPolicy;
 use App\Policies\CatalogPolicy;
@@ -38,6 +39,7 @@ class AuthServiceProvider extends ServiceProvider
         AddonGroup::class => CatalogPolicy::class,
         Addon::class => CatalogPolicy::class,
         Coupon::class => CatalogPolicy::class,
+        RestaurantHour::class => CatalogPolicy::class,
     ];
 
     public function boot(): void
