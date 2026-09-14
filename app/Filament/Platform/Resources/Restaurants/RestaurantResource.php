@@ -126,7 +126,10 @@ class RestaurantResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->defaultSort('name')
+            // Manual order the platform sets in this list, e.g. to feature
+            // certain restaurants first; the public listing sorts by it too.
+            ->defaultSort('sort_order')
+            ->reorderable('sort_order')
             ->columns([
                 ImageColumn::make('logo_path')
                     ->label('')

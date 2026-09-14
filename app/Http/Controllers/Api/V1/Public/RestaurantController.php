@@ -36,6 +36,7 @@ class RestaurantController extends Controller
                 ->when($validated['city'] ?? null, fn ($q, $city) => $q->where('city', $city))
                 ->when($validated['search'] ?? null, fn ($q, $search) => $q->where('name', 'like', '%'.$search.'%'))
                 ->with('hours')
+                ->orderBy('sort_order')
                 ->orderBy('name')
                 ->paginate($validated['per_page'] ?? 15)
         );
