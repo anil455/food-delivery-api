@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libpng-dev \
     libjpeg62-turbo-dev \
+    libwebp-dev \
     libfreetype6-dev \
     libonig-dev \
     libicu-dev \
@@ -17,7 +18,8 @@ RUN apt-get update && apt-get install -y \
 # GD configuration
 RUN docker-php-ext-configure gd \
     --with-freetype \
-    --with-jpeg
+    --with-jpeg \
+    --with-webp
 
 # PHP extensions required by Laravel/packages
 RUN docker-php-ext-install \
