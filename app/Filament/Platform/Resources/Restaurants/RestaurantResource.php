@@ -9,6 +9,7 @@ use App\Filament\Platform\Resources\Restaurants\Pages\CreateRestaurant;
 use App\Filament\Platform\Resources\Restaurants\Pages\EditRestaurant;
 use App\Filament\Platform\Resources\Restaurants\Pages\ListRestaurants;
 use App\Models\Restaurant;
+use App\Services\Tenancy\RestaurantContext;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -24,6 +25,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class RestaurantResource extends Resource
 {
@@ -199,5 +201,20 @@ class RestaurantResource extends Resource
             'create' => CreateRestaurant::route('/create'),
             'edit' => EditRestaurant::route('/{record}/edit'),
         ];
+    }
+
+    /**
+     * The products/orders count columns query across every restaurant, which
+     * needs cross-tenant mode on. The panel's own middleware already turns
+     * that on for the page's first load, but Livewire's background update
+     * requests rebuild this query independently and do not reliably carry
+     * that same request-scoped state, so it is forced on here too — the same
+     * sanctioned escape hatch RestaurantContext exposes everywhere else.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        app(RestaurantContext::class)->enableCrossTenant();
+
+        return parent::getEloquentQuery();
     }
 }
