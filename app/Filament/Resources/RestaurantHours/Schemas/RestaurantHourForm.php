@@ -33,9 +33,11 @@ class RestaurantHourForm
                  * model used that trait (it deliberately does not).
                  */
                 Select::make('day_of_week')
-                    ->options(self::DAYS)
+                    ->options(fn (string $operation): array => $operation === 'create'
+                        ? ['all' => 'All week (same hours every day)', ...self::DAYS]
+                        : self::DAYS)
                     ->required()
-                    ->helperText('Add a second row for the same day to express split service, e.g. lunch then dinner.'),
+                    ->helperText('Pick "All week" to create one row per day at once, or add a second row for the same day to express split service, e.g. lunch then dinner.'),
 
                 Toggle::make('is_closed')
                     ->label('Closed all day')
