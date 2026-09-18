@@ -59,8 +59,15 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // The database (Aiven) is a separate host from where this app
+            // runs, so every fresh connection pays a full TCP+TLS+auth
+            // handshake over that link. Reusing connections across requests
+            // avoids paying that cost on every single one. Set DB_PERSISTENT=
+            // false to fall back to a normal connection if this ever causes
+            // stale-connection issues.
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                PDO::ATTR_PERSISTENT => env('DB_PERSISTENT', true),
             ]) : [],
         ],
 

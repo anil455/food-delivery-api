@@ -92,7 +92,7 @@ final class NearbyRestaurantFinder
             return $query
                 ->orderBy('distance_km')
                 ->limit($limit)
-                ->with('hours')
+                ->with(['hours', 'holidays'])
                 ->get();
         });
     }

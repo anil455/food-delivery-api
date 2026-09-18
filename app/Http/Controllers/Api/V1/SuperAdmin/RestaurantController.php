@@ -45,7 +45,7 @@ class RestaurantController extends Controller
                 ->when($validated['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
                 ->when($validated['search'] ?? null, fn ($q, $term) => $q->where('name', 'like', '%'.$term.'%'))
                 ->withCount(['orders', 'products'])
-                ->with('hours')
+                ->with(['hours', 'holidays'])
                 ->orderBy('name')
                 ->paginate($validated['per_page'] ?? 20)
         );
@@ -184,7 +184,7 @@ class RestaurantController extends Controller
     private function find(int $id): Restaurant
     {
         return $this->context->runCrossTenant(
-            fn () => Restaurant::query()->with('hours')->findOrFail($id)
+            fn () => Restaurant::query()->with(['hours', 'holidays'])->findOrFail($id)
         );
     }
 
