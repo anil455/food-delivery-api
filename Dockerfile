@@ -33,6 +33,12 @@ RUN docker-php-ext-install \
     intl \
     opcache
 
+# Production php.ini as the base (the image ships with no active php.ini at
+# all otherwise), then layer on opcache settings. Without this, PHP recompiles
+# every vendor file from source on every single request.
+RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+COPY docker/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
+
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
