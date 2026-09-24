@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Cart;
 
+use App\Models\Addon;
+use App\Models\AddonGroup;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Restaurant;
@@ -303,5 +305,74 @@ class CartTest extends TestCase
             ->assertJsonPath('data.items', [])
             ->assertJsonPath('data.item_count', 0)
             ->assertJsonPath('data.totals', null);
+    }
+
+    // ── Add-on groups linked by exclusive_key ───────────────────────────────
+
+    /**
+     * @return array{0: \App\Models\Addon, 1: \App\Models\Addon}  [free drink, paid upgrade]
+     */
+    private function attachBeveragePair(?string $key): array
+    {
+        $base = AddonGroup::factory()->required(1, 1)->create([
+            'restaurant_id' => $this->spiceRoute->id, 'name' => 'Choose Beverage', 'exclusive_key' => $key,
+        ]);
+        $upgrade = AddonGroup::factory()->create([
+            'restaurant_id' => $this->spiceRoute->id, 'name' => 'Choose Beverage Upgrade',
+            'min_select' => 0, 'max_select' => 1, 'exclusive_key' => $key,
+        ]);
+
+        $pepsi = Addon::factory()->create([
+            'restaurant_id' => $this->spiceRoute->id, 'addon_group_id' => $base->id, 'name' => 'Pepsi', 'price' => 0,
+        ]);
+        $shake = Addon::factory()->create([
+            'restaurant_id' => $this->spiceRoute->id, 'addon_group_id' => $upgrade->id, 'name' => 'Shake', 'price' => 6000,
+        ]);
+
+        foreach ([$base, $upgrade] as $group) {
+            $this->paneerTikka->addonGroups()->attach($group->id, [
+                'restaurant_id' => $this->spiceRoute->id, 'sort_order' => 0,
+            ]);
+        }
+
+        return [$pepsi, $shake];
+    }
+
+    #[Test]
+    public function a_pick_from_the_linked_upgrade_group_satisfies_the_required_base_group(): void
+    {
+        [, $shake] = $this->attachBeveragePair('beverage');
+
+        $this->addItem(['addons' => [['addon_id' => $shake->id]]])->assertCreated();
+    }
+
+    #[Test]
+    public function linked_groups_share_one_selection_between_them(): void
+    {
+        [$pepsi, $shake] = $this->attachBeveragePair('beverage');
+
+        $this->addItem(['addons' => [['addon_id' => $pepsi->id], ['addon_id' => $shake->id]]])
+            ->assertStatus(422)
+            ->assertJsonPath('code', 'VALIDATION_ERROR');
+    }
+
+    #[Test]
+    public function unlinked_groups_are_still_judged_one_by_one(): void
+    {
+        [$pepsi, $shake] = $this->attachBeveragePair(null);
+
+        // Without a key the required base group is not satisfied by the upgrade.
+        $this->addItem(['addons' => [['addon_id' => $shake->id]]])->assertStatus(422);
+
+        // ...and one pick in each group is fine, as before.
+        $this->addItem(['addons' => [['addon_id' => $pepsi->id], ['addon_id' => $shake->id]]])->assertCreated();
+    }
+
+    #[Test]
+    public function a_required_family_still_needs_one_pick(): void
+    {
+        $this->attachBeveragePair('beverage');
+
+        $this->addItem(['addons' => []])->assertStatus(422);
     }
 }

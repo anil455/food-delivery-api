@@ -302,12 +302,6 @@ final class CartService
         foreach ($groups as $group) {
             $selected = $perGroup[$group->id] ?? 0;
 
-            if ($group->is_required && $selected < max(1, $group->min_select)) {
-                throw CartException::invalidAddon(
-                    "Choose at least {$group->min_select} option from \"{$group->name}\"."
-                );
-            }
-
             if ($group->max_select > 0 && $selected > $group->max_select) {
                 throw CartException::invalidAddon(
                     "Choose at most {$group->max_select} option from \"{$group->name}\"."
@@ -315,7 +309,49 @@ final class CartService
             }
         }
 
+        // Groups that share an exclusive_key hold ONE selection between them
+        // (e.g. "Choose Beverage" and "Choose Beverage Upgrade"), so required
+        // and max are judged across the whole family. A group without a key is
+        // a family of one and behaves exactly as it always did.
+        $families = $groups->groupBy(
+            fn ($group) => filled($group->exclusive_key)
+                ? 'key:'.$group->exclusive_key
+                : 'group:'.$group->id
+        );
+
+        foreach ($families as $members) {
+            $selected = $members->sum(fn ($group) => $perGroup[$group->id] ?? 0);
+
+            $required = $members->filter(fn ($group) => $group->is_required);
+
+            if ($required->isNotEmpty()) {
+                $minimum = max(1, (int) $required->max('min_select'));
+
+                if ($selected < $minimum) {
+                    throw CartException::invalidAddon(
+                        "Choose at least {$minimum} option from \"{$this->familyLabel($members)}\"."
+                    );
+                }
+            }
+
+            $limit = (int) $members->max('max_select');
+
+            if ($limit > 0 && $selected > $limit) {
+                throw CartException::invalidAddon(
+                    "Choose at most {$limit} option from \"{$this->familyLabel($members)}\"."
+                );
+            }
+        }
+
         return $resolved;
+    }
+
+    /**
+     * Human readable name for a family of groups, used in error messages.
+     */
+    private function familyLabel(\Illuminate\Support\Collection $members): string
+    {
+        return $members->pluck('name')->implode('" / "');
     }
 
 }
