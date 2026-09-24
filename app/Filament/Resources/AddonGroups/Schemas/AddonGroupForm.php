@@ -46,6 +46,14 @@ class AddonGroupForm
                 Toggle::make('is_required')
                     ->helperText('Customer must choose from this group before adding the item to cart.'),
 
+                TextInput::make('exclusive_key')
+                    ->label('Exclusive key')
+                    ->maxLength(64)
+                    ->regex('/^[a-z0-9_-]+$/')
+                    ->placeholder('e.g. beverage')
+                    ->helperText('Optional. Groups with the same key share one selection (picking in one clears the other), e.g. "Choose Beverage" and "Choose Beverage Upgrade". Leave empty for an independent group.')
+                    ->columnSpanFull(),
+
                 Toggle::make('is_active')
                     ->default(true)
                     ->helperText('Switch off to hide this group from every product it is attached to.'),

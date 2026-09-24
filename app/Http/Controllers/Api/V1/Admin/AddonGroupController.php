@@ -141,6 +141,7 @@ class AddonGroupController extends Controller
             'min_select' => ['sometimes', 'integer', 'min:0', 'max:20'],
             'max_select' => ['sometimes', 'integer', 'min:1', 'max:20', 'gte:min_select'],
             'is_required' => ['sometimes', 'boolean'],
+            'exclusive_key' => ['sometimes', 'nullable', 'string', 'max:64', 'regex:/^[a-z0-9_-]+$/'],
             'sort_order' => ['sometimes', 'integer', 'min:0', 'max:9999'],
             'is_active' => ['sometimes', 'boolean'],
         ], [

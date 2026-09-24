@@ -23,6 +23,7 @@ class AddonGroupResource extends JsonResource
             'min_select' => $this->min_select,
             'max_select' => $this->max_select,
             'is_required' => $this->is_required,
+            'exclusive_key' => $this->exclusive_key,
             'addons' => AddonResource::collection($this->whenLoaded('addons')),
         ];
     }
