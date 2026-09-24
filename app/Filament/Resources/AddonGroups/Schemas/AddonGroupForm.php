@@ -47,11 +47,11 @@ class AddonGroupForm
                     ->helperText('Customer must choose from this group before adding the item to cart.'),
 
                 TextInput::make('exclusive_key')
-                    ->label('Exclusive key')
+                    ->label('Shared choice key')
                     ->maxLength(64)
                     ->regex('/^[a-z0-9_-]+$/')
                     ->placeholder('e.g. beverage')
-                    ->helperText('Optional. Groups with the same key share one selection (picking in one clears the other), e.g. "Choose Beverage" and "Choose Beverage Upgrade". Leave empty for an independent group.')
+                    ->helperText('Optional. Groups that use the same key share one choice: the customer can pick only one add-on across all of them (picking in one clears the other). E.g. enter "beverage" in both "Choose Beverage" and "Choose Beverage Upgrade". Leave empty for a group with its own independent choice. Use lowercase letters, numbers, "-" or "_".')
                     ->columnSpanFull(),
 
                 Toggle::make('is_active')
