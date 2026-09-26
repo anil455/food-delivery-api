@@ -23,6 +23,20 @@ class AddonGroup extends Model
 
     protected $guarded = ['id', 'restaurant_id'];
 
+    /**
+     * The limits are derived, never typed in. A group with a shared choice key
+     * is a "choose one" group (max 1); without a key the customer may pick any
+     * number (max 0 = no limit, which the cart already treats as unlimited).
+     * A required group needs at least one pick.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (self $group): void {
+            $group->max_select = filled($group->exclusive_key) ? 1 : 0;
+            $group->min_select = $group->is_required ? 1 : 0;
+        });
+    }
+
     protected function casts(): array
     {
         return [

@@ -44,12 +44,16 @@ class AddonGroupsTable
                     ->alignCenter()
                     ->suffix(' products'),
 
-                TextColumn::make('min_select')
-                    ->label('Min')
+                TextColumn::make('choice')
+                    ->label('Choice')
+                    ->state(fn ($record): string => filled($record->exclusive_key) ? 'Choose one' : 'Any number')
+                    ->badge()
+                    ->color(fn ($record): string => filled($record->exclusive_key) ? 'warning' : 'gray')
                     ->alignCenter(),
 
-                TextColumn::make('max_select')
-                    ->label('Max')
+                TextColumn::make('exclusive_key')
+                    ->label('Shared choice key')
+                    ->placeholder('-')
                     ->alignCenter(),
 
                 IconColumn::make('is_required')

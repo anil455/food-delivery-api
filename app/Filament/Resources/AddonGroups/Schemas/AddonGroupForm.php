@@ -27,22 +27,6 @@ class AddonGroupForm
                     ->maxLength(1000)
                     ->columnSpanFull(),
 
-                TextInput::make('min_select')
-                    ->label('Minimum selections')
-                    ->numeric()
-                    ->default(0)
-                    ->minValue(0)
-                    ->maxValue(255)
-                    ->required(),
-
-                TextInput::make('max_select')
-                    ->label('Maximum selections')
-                    ->numeric()
-                    ->default(1)
-                    ->minValue(1)
-                    ->maxValue(255)
-                    ->required(),
-
                 Toggle::make('is_required')
                     ->helperText('Customer must choose from this group before adding the item to cart.'),
 
@@ -51,7 +35,7 @@ class AddonGroupForm
                     ->maxLength(64)
                     ->regex('/^[a-z0-9_-]+$/')
                     ->placeholder('e.g. beverage')
-                    ->helperText('Optional. Groups that use the same key share one choice: the customer can pick only one add-on across all of them (picking in one clears the other). E.g. enter "beverage" in both "Choose Beverage" and "Choose Beverage Upgrade". Leave empty for a group with its own independent choice. Use lowercase letters, numbers, "-" or "_".')
+                    ->helperText('Leave EMPTY to let customers pick as many add-ons as they like (Extras, Toppings). Fill it to make this a "choose one" group. Groups with the SAME key share one choice across all of them (e.g. "beverage" on both "Choose Beverage" and "Choose Beverage Upgrade"). A stand-alone choose-one group (Size, Side, Dessert) gets its own unique key, e.g. "size". Lowercase letters, numbers, "-" or "_".')
                     ->columnSpanFull(),
 
                 Toggle::make('is_active')

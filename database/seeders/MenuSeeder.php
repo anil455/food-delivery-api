@@ -58,8 +58,7 @@ class MenuSeeder extends Seeder
         // A required single choice, so the cart add-on rules get exercised.
         $spice = $restaurant->addonGroups()->create([
             'name' => 'Spice level',
-            'min_select' => 1,
-            'max_select' => 1,
+            'exclusive_key' => 'spice-level',
             'is_required' => true,
             'sort_order' => 2,
         ]);
